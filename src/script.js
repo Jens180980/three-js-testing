@@ -2,35 +2,59 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 // Debug
-const gui = new dat.GUI()
+const controls = new dat.GUI()
 
 // Canvas
-const canvas = document.querySelector('canvas.webgl')
+const canvas = document.querySelector('canvas.animation1')
 
 // Scene
 const scene = new THREE.Scene()
 
+
+// Loaders
+const textureloader = new THREE.TextureLoader()
+const planetTexture = textureloader.load('/animations/planet/NormalMap.png')
+
+const loader = new GLTFLoader();
+let bananaDuck
+
+loader.load( '/animations/banana_duck/scene.gltf', async function ( gltf ) {
+	scene.add( gltf.scene );
+    bananaDuck = gltf.scene.children[0]
+    Animate()
+}, undefined, function ( error ) {
+	console.error( error );
+} );
+
+
 // Objects
-const geometry = new THREE.TorusGeometry( .7, .2, 16, 100 );
+const PlanetGeo = new THREE.SphereGeometry(15, 32, 16)
 
 // Materials
-
-const material = new THREE.MeshBasicMaterial()
-material.color = new THREE.Color(0xff0000)
+const PlanetMaterial = new THREE.MeshStandardMaterial( { color: 0x0000ff } )
+PlanetMaterial.normalMap = planetTexture
 
 // Mesh
-const sphere = new THREE.Mesh(geometry,material)
-scene.add(sphere)
+const PlanetMesh = new THREE.MeshBasicMaterial( PlanetGeo, PlanetMaterial )
+scene.add(PlanetMesh)
 
 // Lights
 
-const pointLight = new THREE.PointLight(0xffffff, 0.1)
-pointLight.position.x = 2
-pointLight.position.y = 3
+const pointLight = new THREE.PointLight(0xffffff, 1)
+pointLight.position.x = 5
+pointLight.position.y = 8
 pointLight.position.z = 4
 scene.add(pointLight)
+
+const ambientlight = new THREE.AmbientLight(0xffffff, 0.5)
+ambientlight.position.x = 2
+ambientlight.position.y = 2
+ambientlight.position.z = 2
+scene.add(ambientlight)
+
 
 /**
  * Sizes
@@ -60,9 +84,9 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 0
-camera.position.y = 0
-camera.position.z = 2
+camera.position.x = 1
+camera.position.y = 2.5
+camera.position.z = 4
 scene.add(camera)
 
 // Controls
@@ -73,7 +97,8 @@ scene.add(camera)
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    alpha: true
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -84,13 +109,15 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 const clock = new THREE.Clock()
 
-const tick = () =>
+const Animate = () =>
 {
 
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
-    sphere.rotation.y = .5 * elapsedTime
+   
+    bananaDuck.rotation.z = 0.5 * elapsedTime
+    
 
     // Update Orbital Controls
     // controls.update()
@@ -99,7 +126,6 @@ const tick = () =>
     renderer.render(scene, camera)
 
     // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
+    window.requestAnimationFrame(Animate)
 }
 
-tick()
