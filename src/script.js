@@ -82,16 +82,9 @@ const mouse = {
     y: undefined
 }
 
-const screenMouse = {
-    x: undefined,
-    y: undefined
-}
-
 addEventListener('mousemove', (event) => {
     mouse.x = (event.clientX / innerWidth) * 2 - 1
     mouse.y = (event.clientY / innerHeight) * 2 - 1
-    console.log('x ' + mouse.x);
-    console.log('y ' + mouse.y);
 })
 
 /************
@@ -179,12 +172,8 @@ const MoonGroup = new THREE.Group()
 MoonGroup.add(Moon)
 scene.add(MoonGroup)
 
-
-
 const Stars = new THREE.Points(StarGeo, StarMat)
 scene.add(Stars)
-
-
 
 /************
  * Animation
@@ -207,7 +196,6 @@ const Animate = () =>
         Spaceship.position.y = -mouse.y * 15
     }
     
-
     // Render
     renderer.render(scene, camera)
     window.requestAnimationFrame(Animate)
