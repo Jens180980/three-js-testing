@@ -4,7 +4,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import gsap from 'gsap'
-import { Float32BufferAttribute } from 'three';
+import { BufferGeometryLoader, Float32BufferAttribute } from 'three';
+
+
+/************************************************************************
+ * 
+ *             CANVAS 1
+ * 
+ ************************************************************************/
 
 // Scene
 const scene = new THREE.Scene()
@@ -201,3 +208,19 @@ const Animate = () =>
     window.requestAnimationFrame(Animate)
 }
 Animate()
+
+
+/************************************************************************
+ * 
+ *             CANVAS 2
+ * 
+ ************************************************************************/
+
+// Zoom on moon and scroll 100vh down
+launch.addEventListener('click', () => {
+    gsap.to(camera.position, { z: 10, duration: 1.5 })
+    setTimeout(() => {
+        canvas2.scrollIntoView({ behavior: "smooth", block: "end" })
+        document.body.style.cursor = 'pointer'
+    }, 800 )
+})
